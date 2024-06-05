@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2016
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Twitter_Download", "Twitter_Download\Twitter_Download.csproj", "{37F26498-F6E9-4EB6-8914-FABBDDC09FDD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterLikeParser", "..\..\TwitterLikeParser\TwitterLikeParser.csproj", "{555649E3-2B28-4379-9DD2-6A0EE1B9D829}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37F26498-F6E9-4EB6-8914-FABBDDC09FDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37F26498-F6E9-4EB6-8914-FABBDDC09FDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37F26498-F6E9-4EB6-8914-FABBDDC09FDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37F26498-F6E9-4EB6-8914-FABBDDC09FDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{555649E3-2B28-4379-9DD2-6A0EE1B9D829}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{555649E3-2B28-4379-9DD2-6A0EE1B9D829}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{555649E3-2B28-4379-9DD2-6A0EE1B9D829}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{555649E3-2B28-4379-9DD2-6A0EE1B9D829}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {195B94F2-42FF-45BD-AEF6-466DFB9A652E}
+	EndGlobalSection
+EndGlobal
