@@ -90,9 +90,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\TwitterLikeParser\TwitterLikeParser.csproj">
+    <ProjectReference Include="..\..\TwitterLikeParser\TwitterTimelineParser.csproj">
       <Project>{555649e3-2b28-4379-9dd2-6a0ee1b9d829}</Project>
-      <Name>TwitterLikeParser</Name>
+      <Name>TwitterTimelineParser</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

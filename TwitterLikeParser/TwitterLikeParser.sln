@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterLikeParser", "TwitterLikeParser.csproj", "{555649E3-2B28-4379-9DD2-6A0EE1B9D829}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterTimelineParser", "TwitterTimelineParser.csproj", "{555649E3-2B28-4379-9DD2-6A0EE1B9D829}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

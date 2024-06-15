@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterLike_Telegram_bot", "TwitterLike_Telegram_bot.csproj", "{25EAF6C5-A74A-41C2-A1EB-0CD331617303}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterLikeParser", "..\..\TwitterLikeParser\TwitterLikeParser.csproj", "{555649E3-2B28-4379-9DD2-6A0EE1B9D829}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterTimelineParser", "..\..\TwitterLikeParser\TwitterTimelineParser.csproj", "{555649E3-2B28-4379-9DD2-6A0EE1B9D829}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

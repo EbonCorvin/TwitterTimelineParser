@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{555649E3-2B28-4379-9DD2-6A0EE1B9D829}</ProjectGuid>
+    <ProjectGuid>{0BACA345-D093-4EAA-8950-5299613A979E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EbonCorvin</RootNamespace>

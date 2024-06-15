@@ -19,7 +19,7 @@ namespace Twitter_Download
             {
                 clientDl = new WebClient();
                 ConfigLoader config = new ConfigLoader("config.txt");
-                TwitterLikeParser parser = new TwitterLikeParser(TimelineType.HomeLatetTimeline, config["twitter_id"], config["cookie"], config["csrt"], 50);
+                TwitterLikeParser parser = new TwitterLikeParser(TimelineType.LikeTimeline, config["twitter_id"], config["cookie"], config["csrt"], 50);
                 while (parser.NextPage())
                 {
                     foreach (Tweet tweet in parser.Tweets)
