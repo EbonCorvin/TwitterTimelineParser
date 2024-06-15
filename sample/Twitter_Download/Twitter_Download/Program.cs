@@ -4,7 +4,8 @@ using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using EbonCorvin.TwitterLike;
+using EbonCorvin;
+using EbonCorvin.TiwtterTimelineParser;
 using System.Linq;
 
 namespace Twitter_Download
@@ -17,8 +18,8 @@ namespace Twitter_Download
             try
             {
                 clientDl = new WebClient();
-                Dictionary<String, String> config = ReadConfig.Read("config.txt");
-                TwitterLikeParser parser = new TwitterLikeParser(config["twitter_id"], config["cookie"], config["csrt"]);
+                ConfigLoader config = new ConfigLoader("config.txt");
+                TwitterLikeParser parser = new TwitterLikeParser(TimelineType.HomeLatetTimeline, config["twitter_id"], config["cookie"], config["csrt"], 50);
                 while (parser.NextPage())
                 {
                     foreach (Tweet tweet in parser.Tweets)

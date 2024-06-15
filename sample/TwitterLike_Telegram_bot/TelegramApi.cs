@@ -8,8 +8,7 @@ using TwitterLike_Telegram_bot.Model;
 using System.IO;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Twitter_Download;
-using EbonCorvin.TwitterLike;
+using EbonCorvin.TiwtterTimelineParser;
 
 namespace TwitterLike_Telegram_bot
 {

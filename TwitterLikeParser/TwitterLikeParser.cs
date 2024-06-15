@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EbonCorvin
 {
-    namespace TwitterLike
+    namespace TiwtterTimelineParser
     {
         public class Tweet
         {
@@ -28,21 +28,31 @@ namespace EbonCorvin
             public String Url { get; set; }
         }
 
+        public enum TimelineType
+        {
+            /// <summary>
+            /// The Like timeline
+            /// </summary>
+            LikeTimeline,
+            /// <summary>
+            /// The home timeline, the one that is marked as "For you" on the home page
+            /// </summary>
+            HomeTimeline,
+            /// <summary>
+            /// The latest home timeline, the one that is marked as "Following" on the home page
+            /// </summary>
+            HomeLatetTimeline
+        }
+
         public class TwitterLikeParser
         {
-            private const String STR_TWITTER_LIKE_URL = "https://api.twitter.com/graphql/p3ELQstq2ZEbEID4yu9R1A/Likes";
-            private const String STR_TWITTER_BEARER_KEY = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA";
-            // 0: Twitter user ID, 1: Return count, 2: Result cursor
-            private const String STR_QUERY_VARIABLE = "%7B%22userId%22%3A%22{0}%22%2C%22count%22%3A{1}%2C%22cursor%22%3A{2}%2C%22includePromotedContent%22%3Afalse%2C%22withSuperFollowsUserFields%22%3Atrue%2C%22withDownvotePerspective%22%3Afalse%2C%22withReactionsMetadata%22%3Afalse%2C%22withReactionsPerspective%22%3Afalse%2C%22withSuperFollowsTweetFields%22%3Atrue%2C%22withClientEventToken%22%3Afalse%2C%22withBirdwatchNotes%22%3Afalse%2C%22withVoice%22%3Atrue%2C%22withV2Timeline%22%3Atrue%7D";
-            private const String STR_QUERY_FEATURE = "%7B%22responsive_web_twitter_blue_verified_badge_is_enabled%22%3Atrue%2C%22verified_phone_label_enabled%22%3Afalse%2C%22responsive_web_graphql_timeline_navigation_enabled%22%3Atrue%2C%22view_counts_public_visibility_enabled%22%3Atrue%2C%22longform_notetweets_consumption_enabled%22%3Afalse%2C%22tweetypie_unmention_optimization_enabled%22%3Atrue%2C%22responsive_web_uc_gql_enabled%22%3Atrue%2C%22vibe_api_enabled%22%3Atrue%2C%22responsive_web_edit_tweet_api_enabled%22%3Atrue%2C%22graphql_is_translatable_rweb_tweet_is_translatable_enabled%22%3Atrue%2C%22view_counts_everywhere_api_enabled%22%3Atrue%2C%22standardized_nudges_misinfo%22%3Atrue%2C%22tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled%22%3Afalse%2C%22interactive_text_enabled%22%3Atrue%2C%22responsive_web_text_conversations_enabled%22%3Afalse%2C%22responsive_web_enhance_cards_enabled%22%3Afalse%7D%0A";
-            private const int INT_RESULT_COUNT = 50;
-            private String UserId { get; set; }
-            private String Cookie { get; set; }
-            private String CSRT_Token { get; set; }
-            private WebClient Client { get; set; }
+            private int ResultCount { get; set; } = 20;
+            private TimelineFetcher Fetcher { get; set; }
+            private TimelineType TimelineType;
+
             public String NextCursor { get; private set; }
 
-            private readonly Regex REGEX_LIKE_ITEM = new Regex("(\\{\\\"entryId\\\".*?\\\"tweetDisplayType\\\":\\\"Tweet\\\"\\}\\}\\})", RegexOptions.Compiled);
+            private readonly Regex REGEX_LIKE_ITEM = new Regex("(\\{\\\"entryId\\\".*?\\\"tweetDisplayType\\\":\\\"Tweet\\\"\\}.*?\\}\\})", RegexOptions.Compiled);
             private readonly Regex REGEX_LIKE_PIC_MEDIA = new Regex("\\\"extended_entities\\\"\\:\\{(.*?)},\\\"favorite_count\\\"", RegexOptions.Compiled);
             private readonly Regex REGEX_LIKE_VIDEO = new Regex("\\{\\\"bitrate\\\":(\\d+).*?\\\"url\\\":\\\"(.*?)\\\"\\}", RegexOptions.Compiled);
             private readonly Regex REGEX_NEXT_CURSOR = new Regex("\\{\\\"entryId\\\"\\:\\\"cursor\\-bottom\\-.*?\\\"value\\\"\\:\\\"(.*?)\\\"", RegexOptions.Compiled);
@@ -52,38 +62,41 @@ namespace EbonCorvin
             private readonly Regex REGEX_TWEET_TWEET_ID = GetRegexForJsonValueExtraction("conversation_id_str");
             private readonly Regex REGEX_TWEET_FULL_TEXT = GetRegexForJsonValueExtraction("full_text");
             public Tweet[] Tweets { get; set; }
-            public TwitterLikeParser(String twitterId, String cookie, String csrtToken)
-            {
-                NextCursor = "null";
-                UserId = twitterId;
-                Cookie = cookie;
-                CSRT_Token = csrtToken;
 
-                Client = new WebClient();
-                Client.Headers.Add("x-csrf-token", CSRT_Token);
-                Client.Headers.Add("Cookie", Cookie);
-                Client.Headers.Add("Authorization", STR_TWITTER_BEARER_KEY);
-                Client.Encoding = Encoding.UTF8;
+            public TwitterLikeParser(TimelineType timelineType, String twitterId, String cookie, String csrtToken, int resultCount)
+            {
+                TimelineType = timelineType;
+                Fetcher = new TimelineFetcher(twitterId, cookie, csrtToken, resultCount);
+                ResultCount = resultCount;
+                NextCursor = "null";
             }
             public bool FirstPage()
             {
                 NextCursor = "null";
-                return GetAndParseLikeList();
+                return ParseTimeline(FetchTimeline());
             }
             public bool NextPage()
             {
-                return GetAndParseLikeList();
+                return ParseTimeline(FetchTimeline());
             }
 
-            private bool GetAndParseLikeList()
+            private string FetchTimeline()
             {
-                Client.QueryString.Add("variables", String.Format(STR_QUERY_VARIABLE, UserId, INT_RESULT_COUNT, NextCursor));
-                Client.QueryString.Add("features", STR_QUERY_FEATURE);
+                switch (TimelineType)
+                {
+                    case TimelineType.LikeTimeline:
+                        return Fetcher.FetchLikeTimeline(NextCursor);
+                    case TimelineType.HomeTimeline:
+                        return Fetcher.FetchHomeTimeline(NextCursor);
+                    case TimelineType.HomeLatetTimeline:
+                        return Fetcher.FetchHomeLatestTimeline(NextCursor);
+                    default: return "";
+                }
+                
+            }
 
-                String likePage = Client.DownloadString(STR_TWITTER_LIKE_URL);
-
-                Client.QueryString.Clear();
-
+            private bool ParseTimeline(String likePage)
+            {
                 List<Tweet> tweets = new List<Tweet>();
                 var likeItems = REGEX_LIKE_ITEM.Matches(likePage);
                 foreach (Match match in likeItems)
@@ -100,7 +113,7 @@ namespace EbonCorvin
                          * 5. (optional) tweet conversation control (Inside liked tweet content) 
                          * I should have written this library in python
                         **/
-                        int tweetContentStart = itemString.LastIndexOf("\"legacy\":{\"created_at\"");
+                        int tweetContentStart = itemString.LastIndexOf("\"legacy\":{\"bookmark_count\"");
                         List<Media> medias = new List<Media>();
                         if (itemString.IndexOf("\"type\":\"video\"", tweetContentStart) > -1 || itemString.IndexOf("\"type\":\"animated_gif\"", tweetContentStart) > -1)
                         {
@@ -130,8 +143,8 @@ namespace EbonCorvin
                         }
                         // Some like item has empty "tweet_results"
                         // Instead of trying to find all of them out, I ignore every post that doesn't have media
-                        if (medias.Count == 0)
-                            continue;
+                        /*if (medias.Count == 0)
+                            continue;*/
                         // bool hasQuote = itemString.Contains("quoted_status_result") && !itemString.Contains("tombstone");
                         String lastCreateDate = REGEX_TWEET_CREATED_DATE.Matches(itemString, tweetContentStart)[0].Groups[1].Value;
                         String screenName = REGEX_TWEET_SCREEN_NAME.Matches(itemString)[0].Groups[1].Value;
@@ -168,7 +181,7 @@ namespace EbonCorvin
                 Match nextCursorMatch = REGEX_NEXT_CURSOR.Match(likePage);
                 String nextCursorText = nextCursorMatch.Groups[1].Value;
                 NextCursor = "%22" + nextCursorText + "%22";
-                return likeItems.Count == INT_RESULT_COUNT;
+                return Tweets.Length > 0;
             }
 
             private static Regex GetRegexForJsonValueExtraction(String key)

@@ -2,10 +2,11 @@
 
 ## Description
 
-A .NET library that fetch the user's like timeline from Twitter's graphql API, and convert them to a bunch of ``Tweet`` objects that contain the contet, attached image and video, post date and such. The screenshot below is the example of an returned object.
+A .NET library that fetch the user's **Like timeline**, **Home timeline (For you)** and **Latest home timeline (Following)** from Twitter's graphql API, and convert them to a bunch of `Tweet` objects that contain the contet, attached image and video, post date and such. The screenshot below is the example of an returned object.
 ![image](https://github.com/EbonCorvin/TwitterTimelineParser/assets/153107703/08c40d71-aca0-4fb9-a62a-022a516227fd)
 
-The usage of this library? You can have a look at the sample folder, it contains 2 possible use cases of the library: 
+The usage of this library? You can have a look at the sample folder, it contains 2 possible use cases of the library:
+
 1. Download every media you "liked" on Twitter, or;
 2. Forward every "liked" tweet to a Telegram channel.
 
@@ -28,18 +29,20 @@ Just add the source code of the library, and use the library as one of the refer
 
 ## Usage
 
-1. refer the library in your project by following the [Installation](#installation) section.
-2. Create a ``TwitterLikeParser`` object, remember to supply the necessary values to the constructor:
-    1. ``twitterId`` - The twitter ID (the number) of someone, not to confuse with the handle of a Twitter user
-    2. ``cookie`` - The cookie on the Twitter website. You should be able to get it by using F12 Devtool of any browser. It's how this library doesn't require user to login
-    3. ``csrt`` - The CSRT token of the user, you can also get it by using F12 Devtool of any browser.
-3. Call ``NextPage()`` to start getting the first page of the timeline. If the values supplied to the constructor are correct, it should return an array of ``Tweet`` object.
-4. Keep calling ``NextPage()`` to get the second page and so on, until it return ``false``, indicating that no more page is available.
+1. Refer the library in your project by following the [Installation](#installation) section.
+2. Create a `TwitterLikeParser` object, remember to supply the necessary values to the constructor:
+   1. `timelineType` - The timeline you want to fetch. It's a `TimelineType` enum value.
+   1. `twitterId` - The twitter ID (the number) of someone, not to confuse with the handle of a Twitter user
+   1. `cookie` - The cookie on the Twitter website. You should be able to get it by using F12 Devtool of any browser. It's how this library doesn't require user to login
+   1. `csrt` - The CSRT token of the user, you can also get it by using F12 Devtool of any browser.
+   1. `resultCount` - The maximum number of result you want the API to return once.
+3. Call `NextPage()` to start getting the first page of the timeline. If the values supplied to the constructor are correct, it should return an array of `Tweet` object.
+4. Keep calling `NextPage()` to get the second page and so on, until it return `false`, indicating that no more page is available.
 
 A simple example call would be:
 
 ```C#
-TwitterLikeParser parser = new TwitterLikeParser(twitter_id, cookie, csrt);
+TwitterLikeParser likeList = new TwitterLikeParser(TimelineType.LikeTimeline, twitter_id, cookie, csrt, 20);
 while (parser.NextPage())
 {
     foreach (Tweet tweet in parser.Tweets)
@@ -49,9 +52,9 @@ while (parser.NextPage())
 }
 ```
 
-## ``Tweet`` and ``Media`` objects
+## `Tweet` and `Media` objects
 
-The ``Tweet`` and ``Media`` objects contains the following fields:
+The `Tweet` and `Media` objects contains the following fields:
 
 ```C#
 public class Tweet

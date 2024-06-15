@@ -5,9 +5,9 @@ using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
-using Twitter_Download;
-using EbonCorvin.TwitterLike;
+using EbonCorvin;
 using System.Linq;
+using EbonCorvin.TiwtterTimelineParser;
 
 namespace TwitterLike_Telegram_bot
 {
@@ -17,7 +17,7 @@ namespace TwitterLike_Telegram_bot
         private HashSet<int> hashTable;
         private FileStream posted;
         private FileStream skipped;
-        private Dictionary<String, String> config;
+        private ConfigLoader config;
         private int checkInterval = 0;
         public TelegramBot()
         {
@@ -35,8 +35,11 @@ namespace TwitterLike_Telegram_bot
                 skipped.Read(buffer, 0, 4);
                 hashTable.Add(BitConverter.ToInt32(buffer, 0));
             }
-            config = ReadConfig.Read("config.txt");
+
+            config = new ConfigLoader("config.txt");
             channelName = config["telegram_channel"];
+            if (!channelName.StartsWith("@"))
+                channelName = "@" + channelName;
             TelegramApi.SetApiKey(config["telegram_bot_apikey"]);
             if (!int.TryParse(config["check_interval"], out checkInterval))
             {
@@ -52,7 +55,7 @@ namespace TwitterLike_Telegram_bot
             Console.WriteLine("Welcome to the Twitter like posts fowarding Telegram bot.");
             Console.WriteLine("This bot checks the liked post list of your account every {0} seconds,", checkInterval / 1000);
             Console.WriteLine("and forwards them to the Telegram channel {0}.", channelName);
-            TwitterLikeParser likeList = new TwitterLikeParser(config["twitter_id"], config["cookie"], config["csrt"]);
+            TwitterLikeParser likeList = new TwitterLikeParser(TimelineType.LikeTimeline, config["twitter_id"], config["cookie"], config["csrt"], 50);
             while (true)
             {
                 try
